@@ -1,44 +1,46 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { Splide, SplideSlide } from "@splidejs/react-splide";
 import "@splidejs/splide/dist/css/splide.min.css";
 
 const Veggie = () => {
-    const [veggie, setVeggie] = useState([]);
+  // usestate, empty array is going to recibe random recipes in setPopular
+  const [Veggie, setVeggie] = useState([]);
 
-    // make the api request to get recipies once the page is load
-    useEffect(() => {
-        getVeggie();
-    }, []);
+  // make the api request to get recipies once the page is load
+  useEffect(() => {
+    getVeggie();
+  }, []);
 
-    // Get popular recipies from api async function
-    const getVeggie = async () => {
-        // store recipes into local storage, check for 'popular' pre saved in local storage
-        const check = localStorage.getItem("veggie");
-        // Check if there is something storage in local storage, if not, save it
-        if (check) {
-        setVeggie(JSON.parse(check));
-        } else {
-        // Request to api, need apiKey and number of recipies i want to get
-        const api = await fetch(
-            `https://api.spoonacular.com/recipes/random?apiKey=${process.env.REACT_APP_API_KEY}&number=9`
-        );
-        // Process api info to json()
-        const data = await api.json();
+  // Get popular recipies from api async function
+  const getVeggie = async () => {
+    // store recipes into local storage, check for 'popular' pre saved in local storage
+    const check = localStorage.getItem("veggie");
+    // Check if there is something storage in local storage, if not, save it
+    if (check) {
+      setVeggie(JSON.parse(check));
+    } else {
+      // Request to api, need apiKey and number of recipies i want to get
+      const api = await fetch(
+        `https://api.spoonacular.com/recipes/random?apiKey=${process.env.REACT_APP_API_KEY}&number=9`
+      );
+      // Process api info to json()
+      const data = await api.json();
 
-        // generate localstorage 'veggie'
-        localStorage.setItem("veggie", JSON.stringify(data.recipes));
-        // .stringify --- in local storage you can only save strings
+      // generate localstorage 'popular'
+      localStorage.setItem("veggie", JSON.stringify(data.recipes));
+      // .stringify --- in local storage you can only save strings
 
-        // Get random recipes from json data
-        setVeggie(data.recipes);
-        console.log(data.recipes);
-        }
+      // Get random recipes from json data
+      setVeggie(data.recipes);
+      console.log(data.recipes);
+    }
+  };
 
   return (
     <div>
       <Wrapper>
-        <h3>Our Vegetarian Picks</h3>
+        <h3>Popular Picks</h3>
         <Splide
           options={{
             perPage: 3,
@@ -48,7 +50,7 @@ const Veggie = () => {
             gap: "5rem",
           }}
         >
-          {veggie.map((recipe) => {
+          {Veggie.map((recipe) => {
             return (
               <SplideSlide key={recipe.id}>
                 <Card>
